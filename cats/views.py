@@ -4,13 +4,16 @@ from .models import Achievement, Cat, User
 
 from .serializers import AchievementSerializer, CatSerializer, UserSerializer
 
+from .permissions import OwnerOrReadOnly
+
 
 class CatViewSet(viewsets.ModelViewSet):
     queryset = Cat.objects.all()
     serializer_class = CatSerializer
+    permission_classes = (OwnerOrReadOnly,)
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user) 
+        serializer.save(owner=self.request.user)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
