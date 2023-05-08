@@ -4,7 +4,7 @@ from .models import Achievement, Cat, User
 
 from .serializers import AchievementSerializer, CatSerializer, UserSerializer
 
-from .permissions import OwnerOrReadOnly
+from .permissions import OwnerOrReadOnly, ReadOnly
 
 
 class CatViewSet(viewsets.ModelViewSet):
@@ -14,6 +14,15 @@ class CatViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def get_permissions(self):
+        # Если в GET-запросе требуется получить информацию об объекте
+        if self.action == 'retrieve':
+            # Вернем обновленный перечень используемых пермишенов
+            return (ReadOnly(),)
+        # Для остальных ситуаций оставим
+        # текущий перечень пермишенов без изменений
+        return super().get_permissions()
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
